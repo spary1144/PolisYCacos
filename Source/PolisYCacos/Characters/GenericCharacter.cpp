@@ -37,7 +37,7 @@ void AGenericCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		);
 	if (!IsValid(InputCmp) || !IsValid(PlayerController) || !IsValid(Subsystem))
 	{
-		return;		
+		return;
 	}
 
 	
