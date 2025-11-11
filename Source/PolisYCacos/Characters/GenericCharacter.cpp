@@ -37,8 +37,10 @@ void AGenericCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		);
 	if (!IsValid(InputCmp) || !IsValid(PlayerController) || !IsValid(Subsystem))
 	{
-		return;		
+		return;
 	}
+
+	
 	
 	Subsystem->AddMappingContext(DefaultMappingContext,0);
 // Esto bindea las teclas de moverse
