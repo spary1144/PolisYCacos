@@ -10,19 +10,22 @@ public class PolisYCacos : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] 
 		{ 
-			"Core"		   , "CoreUObject"    , 
-			"Engine"	   , "InputCore"	  , 
-			"EnhancedInput", "OnlineSubsystem", 
-			"OnlineSubsystemUtils"
+			"Core"		     , 
+			"CoreUObject"    , 
+			"Engine"	     ,
+			"InputCore"	     , 
+			"EnhancedInput"  , 
+			"OnlineSubsystem", 
+			"OnlineSubsystemUtils",
+			"UMG"
 		});
 		
-		PrivateDependencyModuleNames.AddRange(new string []{ "OnlineSubsystem" });
+		PrivateDependencyModuleNames.AddRange(new string[]
+		{
+			"OnlineSubsystem", "Slate", "SlateCore"
+		});
 		
-		DynamicallyLoadedModuleNames.AddRange(new string[] {"OnlineSubsystemSteam"});
+		DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
 		
-		// Uncomment if you are using Slate UI
-		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
-		
-		// Uncomment if you are using online features
 	}
 }

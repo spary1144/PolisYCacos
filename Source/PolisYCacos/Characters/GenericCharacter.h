@@ -47,6 +47,5 @@ public:
 	// Input Functions
 	void Walk(const FInputActionValue& Instance);
 	void Look(const FInputActionValue& Instance);
-	void Jump(const FInputActionValue& Instance);
 
 };

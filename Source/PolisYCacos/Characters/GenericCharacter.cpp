@@ -73,8 +73,3 @@ void AGenericCharacter::Look(const FInputActionValue& Instance)
 	AddControllerYawInput(Value.X);
 	AddControllerPitchInput(Value.Y);
 }
-
-void AGenericCharacter::Jump(const FInputActionValue& Instance)
-{
-	Super::Jump();
-}
