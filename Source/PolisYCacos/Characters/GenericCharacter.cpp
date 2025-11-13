@@ -39,8 +39,6 @@ void AGenericCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	{
 		return;
 	}
-
-	
 	
 	Subsystem->AddMappingContext(DefaultMappingContext,0);
 // Esto bindea las teclas de moverse
