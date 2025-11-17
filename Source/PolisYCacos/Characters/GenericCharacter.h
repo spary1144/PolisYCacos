@@ -12,7 +12,6 @@ class UCameraComponent;
 class UInputAction;
 class UinputComponent;
 
-
 UCLASS()
 class POLISYCACOS_API AGenericCharacter : public ACharacter
 {

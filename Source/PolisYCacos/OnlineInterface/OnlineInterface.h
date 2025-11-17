@@ -1,22 +1,24 @@
 ﻿#pragma once
+#include "CoreMinimal.h"
 #include "OnlineSubsystem.h"
+#include "OnlineInterface.generated.h"
 
-class OnlineInterface : public UObject
+UCLASS()
+class UOnlineInterface : public UObject
 {
+	GENERATED_BODY()
 public:
-
+	
 	void Initialize();
-
-	static OnlineInterface* Get();
-
-	IOnlineSessionPtr GetSession() const;
+	static UOnlineInterface* Get();
+	static IOnlineSessionPtr GetSession();
 	
 private:
 	
-	OnlineInterface();
+	UOnlineInterface();
 	
-	static OnlineInterface* OnlineInterfacePtr;
-	
+	static UOnlineInterface* OnlineInterfacePtr;
 	IOnlineSubsystem* OnlineSubsystemPtr;
 	IOnlineSessionPtr SessionInterfacePtr;
+
 };

@@ -1,15 +1,17 @@
 ﻿#include "OnlineInterface.h"
+
+#include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
 
-OnlineInterface* OnlineInterface::OnlineInterfacePtr = nullptr;
+UOnlineInterface* UOnlineInterface::OnlineInterfacePtr = nullptr;
 
-OnlineInterface::OnlineInterface()
+UOnlineInterface::UOnlineInterface()
 {
 	OnlineSubsystemPtr  = nullptr;
 	SessionInterfacePtr = nullptr;
 }
 
-void OnlineInterface::Initialize()
+void UOnlineInterface::Initialize()
 {
 	OnlineSubsystemPtr = IOnlineSubsystem::Get();
 	
@@ -18,24 +20,27 @@ void OnlineInterface::Initialize()
 		return;
 	}
 	SessionInterfacePtr = OnlineSubsystemPtr->GetSessionInterface();
+	FOnlineSessionSettings SessionSettings;
+	SessionSettings.bIsLANMatch = false;
 	if (!SessionInterfacePtr.IsValid())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SessionManager: no se pudo obtener la interfaz de sesión."));
 	}
 }
 
-OnlineInterface* OnlineInterface::Get() 
+UOnlineInterface* UOnlineInterface::Get() 
 {
 	if (OnlineInterfacePtr == nullptr)
 	{
-		OnlineInterfacePtr = NewObject<OnlineInterface>();
+		OnlineInterfacePtr = NewObject<UOnlineInterface>();
 		OnlineInterfacePtr->AddToRoot();
 		OnlineInterfacePtr->Initialize();
 	}
 	return OnlineInterfacePtr;
 }
 
-IOnlineSessionPtr OnlineInterface::GetSession() const
+IOnlineSessionPtr UOnlineInterface::GetSession()
 {
-	return SessionInterfacePtr;
+	return nullptr;
+	//return SessionInterfacePtr;
 }
