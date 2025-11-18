@@ -1,5 +1,7 @@
 #include "PolisCacosGamemode.h"
 
+#include "PolisYCacos/OnlineInterface/OnlineInterface.h"
+
 void APolisCacosGamemode::BeginPlay()
 {
 	Super::BeginPlay();
@@ -12,6 +14,8 @@ void APolisCacosGamemode::BeginPlay()
 	
 		PlayerController->SetInputMode(InputMode);
 		PlayerController->SetShowMouseCursor(true);
-				
+		
 	}
+	
+	UOnlineInterface::Get()->Initialize();
 }

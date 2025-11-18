@@ -14,7 +14,7 @@ class POLISYCACOS_API UPolisCacosGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 	
-public: 
+public:
 	virtual void Init() override;
 	
 	void CreateGameSession();

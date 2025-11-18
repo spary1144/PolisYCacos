@@ -42,8 +42,8 @@
 			]
 		},
 		{
-			"Name": "OnlineSubsystemNull",
-			"Enabled": false
+			"Name": "OnlineSubsystemEOS",
+			"Enabled": true
 		}
 	]
 }

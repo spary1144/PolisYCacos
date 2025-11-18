@@ -3,10 +3,12 @@
 
 #include "PolisCacosGameInstance.h"
 
+#include "PolisYCacos/OnlineInterface/OnlineInterface.h"
+
 void UPolisCacosGameInstance::Init()
 {
 	Super::Init();
-	
+	UOnlineInterface::Get();
 }
 
 void UPolisCacosGameInstance::CreateGameSession()

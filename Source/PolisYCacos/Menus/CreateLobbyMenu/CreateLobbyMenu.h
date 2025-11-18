@@ -24,10 +24,17 @@ class POLISYCACOS_API UCreateLobbyMenu : public UUserWidget
 	 * - Botón de back
 	 * - Posibles ajustes extra...
 	*/
+	// seguramente en esta clase haga falta algún tipo de struct que le pase settings a la creación de la lobby de steam
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
+	TObjectPtr<UEditableTextBox> LobbyNameInputTextBox;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
+	TObjectPtr<UEditableTextBox> MaxNumPlayersInputTextBox;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
 	FText Text;
-	
+		
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
 	TObjectPtr<UTextBlock> TextBlock;
 	
@@ -38,11 +45,40 @@ class POLISYCACOS_API UCreateLobbyMenu : public UUserWidget
 	TObjectPtr<UMainButton> OnlyFriendsGameButton;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
-	TObjectPtr<UMainButton> JoinGameButton;
+	TObjectPtr<UMainButton> CreateGameButton;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
 	TObjectPtr<UMainButton> BackButton;
+	
+	FDelegateHandle OnLobbyCreatedDelegateHandle;
+	
+	bool OnlyFriendsCanJoin;
 
 public:
+	
 	virtual void NativeConstruct() override;
+	
+	virtual void NativeOnInitialized() override;
+	
+	UFUNCTION()
+	void SetGamePublic();
+	
+	UFUNCTION()
+	void SetGameOnlyFriends();
+	
+	UFUNCTION()
+	void CreateGame();
+	
+	UFUNCTION()
+	void BackPressed();
+	
+	FORCEINLINE TObjectPtr<UTextBlock> GetTextBlock() const { return TextBlock; }
+	FORCEINLINE TObjectPtr<UMainButton> GetPublicGameButton() const { return PublicGameButton; }
+	FORCEINLINE TObjectPtr<UMainButton> GetOnlyFriendsGameButton() const { return OnlyFriendsGameButton; }
+	FORCEINLINE TObjectPtr<UMainButton> GetCreateGameButton() const { return CreateGameButton; }
+	FORCEINLINE TObjectPtr<UMainButton> GetBackButton() const { return BackButton; }
+	FORCEINLINE FText GetText() const { return Text; }
+	FORCEINLINE void SetText(const FText& NewText) { Text = NewText; }
+	
+	
 };

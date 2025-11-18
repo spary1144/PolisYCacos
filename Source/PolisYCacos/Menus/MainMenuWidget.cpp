@@ -2,8 +2,8 @@
 
 #include "MainMenuWidget.h"
 
+#include "CreateLobbyMenu/CreateLobbyMenu.h"
 #include "Kismet/GameplayStatics.h"
-#include "PolisYCacos/OnlineInterface/OnlineInterface.h"
 
 void UMainMenu::NativeOnInitialized()
 {
@@ -19,6 +19,14 @@ void UMainMenu::NativeOnInitialized()
 void UMainMenu::PlayPressed()
 {
 	// Abrir un GameMenu
+	UCreateLobbyMenu* Widget = CreateWidget<UCreateLobbyMenu>(GetWorld(), CreateLobbyMenuSubclass);
+	if (!Widget)
+	{
+		return;
+	}
+	Widget->AddToViewport();
+	SetVisibility(ESlateVisibility::Collapsed);
+	
 }
 
 void UMainMenu::SettingsPressed()

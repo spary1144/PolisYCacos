@@ -14,32 +14,7 @@ UCLASS()
 class POLISYCACOS_API UMainMenu : public UUserWidget
 {
 	GENERATED_BODY()
-public:
-
-	virtual void NativeOnInitialized() override;
-
-	// Funciones de respuesta de los botones de menu
-	UFUNCTION()
-	void PlayPressed();
-	UFUNCTION()
-	void SettingsPressed();
-	UFUNCTION()
-	void CreditsPressed();
-	UFUNCTION()
-	void ExitPressed();
-
-	// GETTERS WALL
 	
-	FORCEINLINE UVerticalBox* GetMainVerticalBox() const { return MainVerticalBox; }
-	FORCEINLINE UCanvasPanel* GetCanvasPanel() const { return CanvasPanel; }
-	//Getters de los botones (Son forceinline, asi podemos llamarlo en la propia clase y no hay problema con ello
-	FORCEINLINE TObjectPtr<UMainButton> GetPlayButton() const { return PlayButton; }
-	FORCEINLINE TObjectPtr<UMainButton> GetExitButton() const { return ExitButton; }
-	FORCEINLINE TObjectPtr<UMainButton> GetCreditsButton() const { return CreditsButton; }
-	FORCEINLINE TObjectPtr<UMainButton> GetSettingsButton() const { return SettingsButton; }
-
-private:
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
 	TObjectPtr<UMainButton> PlayButton;
 
@@ -57,5 +32,35 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
 	TObjectPtr<UVerticalBox> MainVerticalBox;
+public:
+
+	virtual void NativeOnInitialized() override;
+
+	// Funciones de respuesta de los botones de menu
+	UFUNCTION()
+	void PlayPressed();
+	UFUNCTION()
+	void SettingsPressed();
+	UFUNCTION()
+	void CreditsPressed();
+	UFUNCTION()
+	void ExitPressed();
+
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Menu Subclasses")
+	TSubclassOf<UUserWidget> CreateLobbyMenuSubclass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Menu Subclasses")
+	TSubclassOf<UUserWidget> JoinGameMenuSubclass;
+	
+	// GETTERS WALL
+	
+	FORCEINLINE UVerticalBox* GetMainVerticalBox() const { return MainVerticalBox; }
+	FORCEINLINE UCanvasPanel* GetCanvasPanel() const { return CanvasPanel; }
+	//Getters de los botones (Son forceinline, asi podemos llamarlo en la propia clase y no hay problema con ello
+	FORCEINLINE TObjectPtr<UMainButton> GetPlayButton() const { return PlayButton; }
+	FORCEINLINE TObjectPtr<UMainButton> GetExitButton() const { return ExitButton; }
+	FORCEINLINE TObjectPtr<UMainButton> GetCreditsButton() const { return CreditsButton; }
+	FORCEINLINE TObjectPtr<UMainButton> GetSettingsButton() const { return SettingsButton; }
+		
 };
