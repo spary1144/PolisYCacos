@@ -3,6 +3,7 @@
 #include "Blueprint/UserWidget.h"
 #include "JoinGameMenu.generated.h"
 
+class ULobbyWidgetButton;
 class UMainButton;
 class UScrollBox;
 class UTextBlock;
@@ -19,39 +20,46 @@ class UJoinGameMenu : public UUserWidget
 	* - Botón de refrescar (imagino que llamará a alguna función de steam para tener todas las partidas
 	* - Botón de back to menu 
 	* - Algún filtro...
-	* - Va a hacer falta un custom widget para represetnar la info que llegue de los servidores disponibles de steam
+	* - Va a hacer falta un custom widget para representar la info que llegue de los servidores disponibles de steam
 	*/
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BindWidget))
 	FText Text;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BindWidget))
 	TObjectPtr<UTextBlock> TextBlock;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BindWidget))
 	TObjectPtr<UEditableTextBox> LobbyIdInputTextBox;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BindWidget))
 	TObjectPtr<UScrollBox> ScrollBox;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BindWidget))
 	TObjectPtr<UMainButton> RefreshButton;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BindWidget))
 	TObjectPtr<UMainButton> BackButton;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UUserWidget> LobbyWidgetClass;
+	
 public:
 	
-	virtual void NativeConstruct() override;
+	UFUNCTION()
+	void RefreshButtonClicked();
 	
+	virtual void NativeOnInitialized() override;
+	
+	UFUNCTION()
+	void FillScrollBox() const;
+
 	FORCEINLINE TObjectPtr<UMainButton> GetRefreshButton() const	{ return RefreshButton; }
 	FORCEINLINE TObjectPtr<UMainButton> GetBackButton() const		{ return BackButton; }
-	FORCEINLINE UEditableTextBox* GetLobbyIdInputTextBox() const	{ return LobbyIdInputTextBox; }
-	FORCEINLINE UScrollBox* GetScrollBox() const { return ScrollBox; }
-	FORCEINLINE UTextBlock* GetTextBlock() const { return TextBlock; }
+	FORCEINLINE TObjectPtr<UEditableTextBox> GetLobbyIdInputTextBox() const	{ return LobbyIdInputTextBox; }
+	FORCEINLINE TObjectPtr<UScrollBox> GetScrollBox() const { return ScrollBox; }
+	FORCEINLINE TObjectPtr<UTextBlock> GetTextBlock() const { return TextBlock; }
 	FORCEINLINE FText GetText() const { return Text; }
-	
 	FORCEINLINE void SetText(const FText& NewText) { Text = NewText; }
-	
 	
 };

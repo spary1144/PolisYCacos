@@ -17,10 +17,13 @@ class ULobbyManager : public UObject
 public:
 	
 	FDelegateHandle LobbyOpenedDelegateHandle;
+	
 	void Initialize()
 	{
 		
 	};
+	
+	virtual void BeginDestroy() override;
 	
 	UFUNCTION()
 	void PostLobbyOpened(UWorld* World);

@@ -32,9 +32,26 @@ class POLISYCACOS_API UMainMenu : public UUserWidget
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
 	TObjectPtr<UVerticalBox> MainVerticalBox;
-public:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
+	TObjectPtr<UVerticalBox> ChooseModeVerticalBox;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
+	TObjectPtr<UMainButton> CreateJoinGameMenu;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
+	TObjectPtr<UMainButton> CreateCreateGameMenu;
+	
+	
+public:
+	
 	virtual void NativeOnInitialized() override;
+	
+	UFUNCTION()
+	void CreateJoinGamePressed();
+	
+	UFUNCTION()
+	void CreateCreateGamePressed();
 
 	// Funciones de respuesta de los botones de menu
 	UFUNCTION()
@@ -45,7 +62,6 @@ public:
 	void CreditsPressed();
 	UFUNCTION()
 	void ExitPressed();
-
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Menu Subclasses")
 	TSubclassOf<UUserWidget> CreateLobbyMenuSubclass;
@@ -62,5 +78,8 @@ public:
 	FORCEINLINE TObjectPtr<UMainButton> GetExitButton() const { return ExitButton; }
 	FORCEINLINE TObjectPtr<UMainButton> GetCreditsButton() const { return CreditsButton; }
 	FORCEINLINE TObjectPtr<UMainButton> GetSettingsButton() const { return SettingsButton; }
+	FORCEINLINE TObjectPtr<UVerticalBox> GetChooseModeVerticalBox() const { return ChooseModeVerticalBox; }
+	FORCEINLINE TObjectPtr<UMainButton> GetCreateJoinGameMenu() const { return CreateJoinGameMenu; }
+	FORCEINLINE TObjectPtr<UMainButton> GetCreateCreateGameMenu() const { return CreateCreateGameMenu; }
 		
 };

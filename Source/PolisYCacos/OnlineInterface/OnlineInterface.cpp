@@ -30,7 +30,6 @@ void UOnlineInterface::Initialize()
 	CreateSessionCompleteDelegateHandle = SessionInterfacePtr->AddOnCreateSessionCompleteDelegate_Handle(FOnCreateSessionCompleteDelegate::CreateUObject(this, &UOnlineInterface::OnCreateSessionComplete));
 	FindSessionCompleteDelegateHandle	= SessionInterfacePtr->AddOnFindSessionsCompleteDelegate_Handle(FOnFindSessionsCompleteDelegate::CreateUObject(this, &UOnlineInterface::OnFindSessionComplete));
 	JoinSessionCompleteDelegateHandle	= SessionInterfacePtr->AddOnJoinSessionCompleteDelegate_Handle(FOnJoinSessionCompleteDelegate::CreateUObject(this, &UOnlineInterface::OnJoinSessionComplete));
-	CreateSessionCompleteDelegateHandle = SessionInterfacePtr->AddOnCreateSessionCompleteDelegate_Handle(FOnCreateSessionCompleteDelegate::CreateUObject(this, &UOnlineInterface::OnCreateSessionComplete));
 	
 }
 
@@ -46,7 +45,12 @@ void UOnlineInterface::CreateGameSession(const int32 MaxPlayers, const FString& 
 	Settings.bAllowJoinViaPresence	= true;
 	Settings.bAllowJoinViaPresenceFriendsOnly = OnlyFriendsCanJoin;
 	
-	if (SessionInterfacePtr->CreateSession(0, *SessionName, Settings))
+	Settings.Set("LOBBY_NAME", SessionName, EOnlineDataAdvertisementType::ViaOnlineService);
+	
+	// Creo que con esto podemos hacer el nombre del mapa
+	//Settings.Set(FName(TEXT("MAP_NAME")), FString(TEXT("MiMapa")), EOnlineDataAdvertisementType::ViaOnlineService);
+	
+	if (SessionInterfacePtr->CreateSession(0, NAME_GameSession, Settings))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SUCCESS CREATING THE LOBBY"));
 	}
@@ -61,7 +65,7 @@ void UOnlineInterface::FindGameSessions()
 	SessionSearch					= MakeShareable(new FOnlineSessionSearch());
 	SessionSearch->MaxSearchResults = 100;
 	SessionSearch->QuerySettings.Set(SEARCH_LOBBIES, true, EOnlineComparisonOp::Equals);
-	SessionInterfacePtr->FindSessions(0, SessionSearch.ToSharedRef());
+	bool result = SessionInterfacePtr->FindSessions(0, SessionSearch.ToSharedRef());
 }
 
 void UOnlineInterface::OnFindSessionComplete(bool bWasSuccessful)
@@ -100,6 +104,31 @@ void UOnlineInterface::JoinGameSession(const FString& SessionID)
 void UOnlineInterface::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
 	OnJoinSessionCompleteDelegate.Broadcast(Result == EOnJoinSessionCompleteResult::Success);
+	if (!Result == EOnJoinSessionCompleteResult::Success)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Lobby could not be joined"));
+		return;
+	}
+	
+	FString ConnectString; 
+	if (!SessionInterfacePtr->GetResolvedConnectString(SessionName, ConnectString))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Lobby could not be joined (ConnectString Missing)"));
+		return; 
+	}
+	
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Lobby could not be joined (World Missing)"));
+		return;
+	}
+	
+	APlayerController* PlayerController = World->GetFirstPlayerController();
+	if (IsValid(PlayerController))
+	{
+		PlayerController->ClientTravel(ConnectString, TRAVEL_Absolute);
+	}
 }
 
 UOnlineInterface* UOnlineInterface::Get() 
@@ -115,10 +144,15 @@ UOnlineInterface* UOnlineInterface::Get()
 
 void UOnlineInterface::OnCreateSessionComplete(FName SessionName, bool bSuccess)
 {
+	static int32 CreateSessionCompletedCount = 0;
+	UE_LOG(LogTemp, Warning, TEXT("OnCreateSessionComplete #%d (Success=%d)"),
+		   ++CreateSessionCompletedCount, bSuccess);
 	OnCreateSessionCompleteDelegate.Broadcast(bSuccess);
 	
 	if (!bSuccess)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Lobby could not be created"));
+
 		return;
 	}
 	
@@ -128,7 +162,7 @@ void UOnlineInterface::OnCreateSessionComplete(FName SessionName, bool bSuccess)
 		return;
 	}
 	
-	Session->SessionSettings.Get(FName("SteamLobbyId"), LobbyID);
+	//Session->SessionSettings.Get(FName("SteamLobbyId"), LobbyID);
 	if (LobbyID.IsEmpty())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("LobbyID is empty"));

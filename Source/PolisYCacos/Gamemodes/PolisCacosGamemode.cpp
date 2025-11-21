@@ -14,8 +14,6 @@ void APolisCacosGamemode::BeginPlay()
 	
 		PlayerController->SetInputMode(InputMode);
 		PlayerController->SetShowMouseCursor(true);
-		
 	}
-	
-	UOnlineInterface::Get()->Initialize();
+	UOnlineInterface::Get();
 }

@@ -5,11 +5,6 @@
 #include "PolisYCacos/Menus/MainButton/MainButton.h"
 #include "PolisYCacos/OnlineInterface/OnlineInterface.h"
 
-void UCreateLobbyMenu::NativeConstruct()
-{
-	Super::NativeConstruct();
-}
-
 void UCreateLobbyMenu::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -41,6 +36,12 @@ void UCreateLobbyMenu::CreateGame()
 	LobbyManager->SetNumMaxPlayers(FCString::Atoi(*MaxNumPlayersInputTextBox->GetText().ToString()));
 	LobbyManager->SetLobbyName(LobbyNameInputTextBox->GetText().ToString());
 	LobbyManager->SetOnlyFriendsCanJoin(OnlyFriendsCanJoin);
+	
+	if (LobbyManager->LobbyOpenedDelegateHandle.IsValid())
+	{
+		FCoreUObjectDelegates::PostLoadMapWithWorld.Remove(LobbyManager->LobbyOpenedDelegateHandle);
+		LobbyManager->LobbyOpenedDelegateHandle.Reset();
+	}
 	
 	LobbyManager->LobbyOpenedDelegateHandle = FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(LobbyManager, &ULobbyManager::PostLobbyOpened);
 	UGameplayStatics::OpenLevel(GetWorld(), TEXT("L_Lobby"));

@@ -34,7 +34,7 @@ class POLISYCACOS_API UCreateLobbyMenu : public UUserWidget
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
 	FText Text;
-		
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BlueprintProtected = "true", BindWidget))
 	TObjectPtr<UTextBlock> TextBlock;
 	
@@ -55,8 +55,6 @@ class POLISYCACOS_API UCreateLobbyMenu : public UUserWidget
 	bool OnlyFriendsCanJoin;
 
 public:
-	
-	virtual void NativeConstruct() override;
 	
 	virtual void NativeOnInitialized() override;
 	

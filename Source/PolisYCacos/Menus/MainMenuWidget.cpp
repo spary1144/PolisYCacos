@@ -2,8 +2,31 @@
 
 #include "MainMenuWidget.h"
 
+#include "Components/CanvasPanel.h"
+#include "Components/VerticalBox.h"
 #include "CreateLobbyMenu/CreateLobbyMenu.h"
+#include "JoinGameMenu/JoinGameMenu.h"
 #include "Kismet/GameplayStatics.h"
+
+void UMainMenu::CreateJoinGamePressed()
+{
+	UJoinGameMenu* CreateLobbyMenu = CreateWidget<UJoinGameMenu>(GetWorld(), JoinGameMenuSubclass);
+	if (CreateLobbyMenu)
+	{
+		CreateLobbyMenu->AddToViewport();
+		SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void UMainMenu::CreateCreateGamePressed()
+{
+	UCreateLobbyMenu* CreateGameMenu = CreateWidget<UCreateLobbyMenu>(GetWorld(), CreateLobbyMenuSubclass);
+	if (CreateGameMenu)
+	{
+		CreateGameMenu->AddToViewport();
+		SetVisibility(ESlateVisibility::Hidden);
+	}
+}
 
 void UMainMenu::NativeOnInitialized()
 {
@@ -14,19 +37,16 @@ void UMainMenu::NativeOnInitialized()
 	GetExitButton()->GetButton()->OnClicked.AddDynamic(this, &UMainMenu::ExitPressed);
 	GetCreditsButton()->GetButton()->OnClicked.AddDynamic(this, &UMainMenu::CreditsPressed);
 	GetSettingsButton()->GetButton()->OnClicked.AddDynamic(this, &UMainMenu::SettingsPressed);
+	GetCreateJoinGameMenu()->GetButton()->OnClicked.AddDynamic(this, &UMainMenu::CreateJoinGamePressed);
+	GetCreateCreateGameMenu()->GetButton()->OnClicked.AddDynamic(this, &UMainMenu::CreateCreateGamePressed);
+	GetChooseModeVerticalBox()->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainMenu::PlayPressed()
 {
 	// Abrir un GameMenu
-	UCreateLobbyMenu* Widget = CreateWidget<UCreateLobbyMenu>(GetWorld(), CreateLobbyMenuSubclass);
-	if (!Widget)
-	{
-		return;
-	}
-	Widget->AddToViewport();
-	SetVisibility(ESlateVisibility::Collapsed);
-	
+	GetChooseModeVerticalBox()->SetVisibility(ESlateVisibility::Visible);
+	GetMainVerticalBox()->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainMenu::SettingsPressed()
