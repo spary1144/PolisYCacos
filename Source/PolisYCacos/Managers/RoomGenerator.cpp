@@ -185,7 +185,7 @@ void ARoomGenerator::SpawnRooms()
 {
 	Rooms.Empty();
 	Rooms.Init(FArrayRooms{},10);
-	GenerateLevel(6);
+	GenerateLevel(3);
 	for (int i=0; i < 10;++i)
 	{
 		Rooms[i].Room.Init(nullptr,10);
@@ -196,16 +196,26 @@ void ARoomGenerator::SpawnRooms()
 				continue;
 			if (GenerationMatrix[i][j] == 1 ||GenerationMatrix[i][j] == 2 || GenerationMatrix[i][j] == 3)
 			{
-				//auto AuxPtr  = Cast<ARoomParent>(GetWorld()->SpawnActor(RoomParentSubclass));
 				auto AuxPtr  = Cast<ARoomParent>(GetWorld()->SpawnActor<ARoomParent>(RoomParentSubclass));
 				if (IsValid(AuxPtr))
 				{
 					Rooms[i].Room.Add(AuxPtr); 
 					if (GenerationMatrix[i][j] == 1 )
-						AuxPtr->GetMeshComponent()->GetStaticMesh()->SetMaterial(0, Colours[0]);
+					{
+						//AuxPtr->GetMeshComponent()->GetStaticMesh()->SetMaterial(0, Colours[0]);
+						AuxPtr->GetMeshComponent()->SetMaterial(0, Colours[0]);
+					}
 					else if (GenerationMatrix[i][j] == 2)
-						AuxPtr->GetMeshComponent()->GetStaticMesh()->SetMaterial(0, Colours[1]);
-					AuxPtr->SetActorLocation(FVector(250 * i,250*j,0));
+					{
+						//AuxPtr->GetMeshComponent()->GetStaticMesh()->SetMaterial(0, Colours[1]);
+						AuxPtr->GetMeshComponent()->SetMaterial(0, Colours[1]);
+					}
+					else if (GenerationMatrix[i][j] == 3)
+					{
+						//AuxPtr->GetMeshComponent()->GetStaticMesh()->SetMaterial(0, Colours[2]);
+						AuxPtr->GetMeshComponent()->SetMaterial(0, Colours[2]);
+					}
+					AuxPtr->SetActorLocation(FVector(225 * i,225*j,0));
 				}
 			}
 		}
