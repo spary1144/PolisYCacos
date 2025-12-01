@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Misc/MapErrors.h"
 #include "RoomParent.generated.h"
 
 UCLASS()
@@ -14,7 +15,10 @@ class POLISYCACOS_API ARoomParent : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ARoomParent();
-
+	FORCEINLINE TObjectPtr<UStaticMeshComponent> GetMeshComponent() const
+	{
+		return RoomMesh;
+	} 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

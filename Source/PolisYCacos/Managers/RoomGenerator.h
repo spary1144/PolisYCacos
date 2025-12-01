@@ -21,11 +21,20 @@ class POLISYCACOS_API ARoomGenerator : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ARoomGenerator();
-
+private:
+	int32 GenerationMatrix[10][10];
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	
+	UFUNCTION(CallInEditor, DisplayName="GenerateLvl")
+	void GenerateLevel(int RoomDensity);
+	
+	UFUNCTION(CallInEditor, DisplayName="Generate")
+	void SpawnRooms();
+	
+	UPROPERTY(EditAnywhere, Category = "Variables", meta=(AllowPrivateAccess = "true"))
+	TArray<TObjectPtr<UMaterial>> Colours;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
