@@ -3,7 +3,9 @@
 
 #include "RoomParent.h"
 
-// Sets default values
+/**
+ * @brief Constructor - Choose the Room mesh
+ */
 ARoomParent::ARoomParent()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.

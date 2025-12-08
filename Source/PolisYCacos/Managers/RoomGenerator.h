@@ -17,12 +17,21 @@ UCLASS()
 class POLISYCACOS_API ARoomGenerator : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
+public:
 	ARoomGenerator();
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+	
+	UPROPERTY(EditAnywhere, Category = "Variables", meta=(AllowPrivateAccess = "true"))
+	TSubclassOf<AActor> RoomParentSubclass;
+	
+	UPROPERTY(EditAnywhere, Category = "Variables", meta=(AllowPrivateAccess = "true"))
+	TArray<FArrayRooms> Rooms;
 private:
 	int32 GenerationMatrix[10][10];
+	void GenerateStartPoint();
+	void GenerateRoomDensity(int Density);
+	void GenerateCorridors();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -35,13 +44,4 @@ protected:
 	
 	UPROPERTY(EditAnywhere, Category = "Variables", meta=(AllowPrivateAccess = "true"))
 	TArray<TObjectPtr<UMaterial>> Colours;
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-	
-	UPROPERTY(EditAnywhere, Category = "Variables", meta=(AllowPrivateAccess = "true"))
-	TSubclassOf<AActor> RoomParentSubclass;
-	
-	UPROPERTY(EditAnywhere, Category = "Variables", meta=(AllowPrivateAccess = "true"))
-	TArray<FArrayRooms> Rooms;
 };
