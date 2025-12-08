@@ -2,6 +2,8 @@
 
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
+#include "Engine/Engine.h"
+#include "Engine/EngineBaseTypes.h"
 #include "Online/OnlineSessionNames.h"
 
 UOnlineInterface* UOnlineInterface::Instance = nullptr;
@@ -36,16 +38,24 @@ void UOnlineInterface::Initialize()
 void UOnlineInterface::CreateGameSession(const int32 MaxPlayers, const FString& SessionName, const bool OnlyFriendsCanJoin) const
 {
 	FOnlineSessionSettings Settings;
-	Settings.bIsLANMatch			= false;
+	//Settings.bIsLANMatch			= false;
+	Settings.bIsLANMatch			= true;
+	
 	Settings.bShouldAdvertise		= true;
-	Settings.NumPublicConnections	= MaxPlayers;
-	Settings.bUsesPresence			= true;
+//	Settings.NumPublicConnections	= MaxPlayers;
+	
+	Settings.NumPublicConnections	= 4;
+	//Settings.bUsesPresence			= true;
+	Settings.bUsesPresence			= false;
+	
 	Settings.bAllowJoinInProgress	= true;
 	Settings.bAllowInvites			= false;
-	Settings.bAllowJoinViaPresence	= true;
+	//Settings.bAllowJoinViaPresence	= true;
+	Settings.bAllowJoinViaPresence	= false;
+	
 	Settings.bAllowJoinViaPresenceFriendsOnly = OnlyFriendsCanJoin;
 	
-	Settings.Set("LOBBY_NAME", SessionName, EOnlineDataAdvertisementType::ViaOnlineService);
+	//Settings.Set("LOBBY_NAME", SessionName, EOnlineDataAdvertisementType::ViaOnlineService);
 	
 	// Creo que con esto podemos hacer el nombre del mapa
 	//Settings.Set(FName(TEXT("MAP_NAME")), FString(TEXT("MiMapa")), EOnlineDataAdvertisementType::ViaOnlineService);
@@ -63,9 +73,11 @@ void UOnlineInterface::FindGameSessions()
 		return;
 	}
 	SessionSearch					= MakeShareable(new FOnlineSessionSearch());
-	SessionSearch->MaxSearchResults = 100;
-	SessionSearch->QuerySettings.Set(SEARCH_LOBBIES, true, EOnlineComparisonOp::Equals);
-	bool result = SessionInterfacePtr->FindSessions(0, SessionSearch.ToSharedRef());
+	SessionSearch->MaxSearchResults = 50;
+	SessionSearch->bIsLanQuery = true;
+	
+	//SessionSearch->QuerySettings.Set(SEARCH_LOBBIES, true, EOnlineComparisonOp::Equals);
+	SessionInterfacePtr->FindSessions(0, SessionSearch.ToSharedRef());
 }
 
 void UOnlineInterface::OnFindSessionComplete(bool bWasSuccessful)
@@ -74,10 +86,14 @@ void UOnlineInterface::OnFindSessionComplete(bool bWasSuccessful)
 	{
 		return;
 	}
+	
 	if (SessionSearch.IsValid())
 	{
 		SessionSearchResult = SessionSearch->SearchResults;
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,
+			FString::Printf(TEXT("Num of games found %i"), SessionSearchResult.Num()));
 	}
+	
 	OnFindSessionsCompleteDelegate.Broadcast();
 }
 
@@ -98,7 +114,6 @@ void UOnlineInterface::JoinGameSession(const FString& SessionID)
 	}
 	
 	FOnlineSessionSearchResult SearchResult;
-	
 }
 
 void UOnlineInterface::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
@@ -117,7 +132,7 @@ void UOnlineInterface::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCo
 		return; 
 	}
 	
-	UWorld* World = GetWorld();
+	const UWorld* World = GetWorld();
 	if (!World)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Lobby could not be joined (World Missing)"));
@@ -141,12 +156,12 @@ UOnlineInterface* UOnlineInterface::Get()
 	}
 	return Instance;
 }
+// hay que suscribirse a eventos de este estilo para gestionar la información porque si no puedo estar obteniendo lenght antes de rellenar el vector
 
 void UOnlineInterface::OnCreateSessionComplete(FName SessionName, bool bSuccess)
 {
 	static int32 CreateSessionCompletedCount = 0;
-	UE_LOG(LogTemp, Warning, TEXT("OnCreateSessionComplete #%d (Success=%d)"),
-		   ++CreateSessionCompletedCount, bSuccess);
+	UE_LOG(LogTemp, Warning, TEXT("OnCreateSessionComplete #%d (Success=%d)"),  ++CreateSessionCompletedCount, bSuccess);
 	OnCreateSessionCompleteDelegate.Broadcast(bSuccess);
 	
 	if (!bSuccess)
@@ -162,9 +177,13 @@ void UOnlineInterface::OnCreateSessionComplete(FName SessionName, bool bSuccess)
 		return;
 	}
 	
-	//Session->SessionSettings.Get(FName("SteamLobbyId"), LobbyID);
 	if (LobbyID.IsEmpty())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("LobbyID is empty"));
 	}
+	
+	const FString LobbyMapPath = "/Game/Maps/Lobby/L_Lobby?listen";
+	
+	if (GetWorld())
+		GetWorld()->ServerTravel(LobbyMapPath);
 }

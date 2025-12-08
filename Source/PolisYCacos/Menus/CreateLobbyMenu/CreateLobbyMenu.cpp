@@ -1,9 +1,7 @@
 ﻿#include "CreateLobbyMenu.h"
 
-#include "Kismet/GameplayStatics.h"
-#include "PolisYCacos/Managers/LobbyManager.h"
+#include "PolisYCacos/GameInstance/PolisCacosGameInstance.h"
 #include "PolisYCacos/Menus/MainButton/MainButton.h"
-#include "PolisYCacos/OnlineInterface/OnlineInterface.h"
 
 void UCreateLobbyMenu::NativeOnInitialized()
 {
@@ -12,7 +10,6 @@ void UCreateLobbyMenu::NativeOnInitialized()
 	GetOnlyFriendsGameButton()->GetButton()->OnClicked.AddDynamic(this, &ThisClass::SetGameOnlyFriends);
 	GetCreateGameButton()->GetButton()->OnClicked.AddDynamic(this, &ThisClass::CreateGame);
 	GetBackButton()->GetButton()->OnClicked.AddDynamic(this, &ThisClass::BackPressed);
-	
 }
 
 void UCreateLobbyMenu::SetGamePublic()
@@ -27,24 +24,16 @@ void UCreateLobbyMenu::SetGameOnlyFriends()
 
 void UCreateLobbyMenu::CreateGame()
 {
-	const TObjectPtr<ULobbyManager> LobbyManager = ULobbyManager::Get();
-	if (!LobbyManager)
+	// Pasos:
+	// Llamar al game instance para que las funciones qwue tiene dentro gestionen las movidas
+	UPolisCacosGameInstance* GameInstance = Cast<UPolisCacosGameInstance>(GetGameInstance());
+	if (!IsValid(GameInstance))
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Game Instance Invalid"));
 		return;
 	}
 	
-	LobbyManager->SetNumMaxPlayers(FCString::Atoi(*MaxNumPlayersInputTextBox->GetText().ToString()));
-	LobbyManager->SetLobbyName(LobbyNameInputTextBox->GetText().ToString());
-	LobbyManager->SetOnlyFriendsCanJoin(OnlyFriendsCanJoin);
-	
-	if (LobbyManager->LobbyOpenedDelegateHandle.IsValid())
-	{
-		FCoreUObjectDelegates::PostLoadMapWithWorld.Remove(LobbyManager->LobbyOpenedDelegateHandle);
-		LobbyManager->LobbyOpenedDelegateHandle.Reset();
-	}
-	
-	LobbyManager->LobbyOpenedDelegateHandle = FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(LobbyManager, &ULobbyManager::PostLobbyOpened);
-	UGameplayStatics::OpenLevel(GetWorld(), TEXT("L_Lobby"));
+	//(int32 MaxPlayers, const FString& LobbyName, bool bOnlyFriends)
 }
 
 void UCreateLobbyMenu::BackPressed()

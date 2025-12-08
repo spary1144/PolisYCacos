@@ -17,15 +17,13 @@ public class PolisYCacos : ModuleRules
 			"EnhancedInput"  , 
 			"OnlineSubsystem", 
 			"OnlineSubsystemUtils",
-			"UMG"
+			"UMG",
+			
 		});
 		
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
-			"OnlineSubsystem", "Slate", "SlateCore"
+			"Slate", "SlateCore"
 		});
-		
-		DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
-		
 	}
 }

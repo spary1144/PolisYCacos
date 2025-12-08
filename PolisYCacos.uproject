@@ -10,6 +10,7 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Engine"
+				
 			]
 		}
 	],
@@ -41,7 +42,11 @@
 			]
 		},
 		{
-			"Name": "OnlineSubsystemEOS",
+			"Name": "OnlineSubsystemNull",
+			"Enabled": false
+		},
+		{
+			"Name": "SteamSockets",
 			"Enabled": true
 		}
 	]

@@ -3,6 +3,7 @@
 #include "Blueprint/UserWidget.h"
 #include "JoinGameMenu.generated.h"
 
+class UPolisCacosGameInstance;
 class ULobbyWidgetButton;
 class UMainButton;
 class UScrollBox;
@@ -44,15 +45,19 @@ class UJoinGameMenu : public UUserWidget
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UUserWidget> LobbyWidgetClass;
 	
+	UPROPERTY()
+	UPolisCacosGameInstance* GameInstance;
+		
 public:
 	
 	UFUNCTION()
 	void RefreshButtonClicked();
 	
 	virtual void NativeOnInitialized() override;
-	
+	void BindToGameInstanceDelegate();
+
 	UFUNCTION()
-	void FillScrollBox() const;
+	void FillScrollBox();
 
 	FORCEINLINE TObjectPtr<UMainButton> GetRefreshButton() const	{ return RefreshButton; }
 	FORCEINLINE TObjectPtr<UMainButton> GetBackButton() const		{ return BackButton; }
