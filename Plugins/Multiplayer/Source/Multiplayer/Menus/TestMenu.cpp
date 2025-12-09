@@ -46,17 +46,18 @@ void UTestMenu::NativeDestruct()
 	Super::NativeDestruct();
 }
 
-void UTestMenu::MenuSetup(const int32 NumberPublicConnections, const FString& TypeOfMatch)
+void UTestMenu::MenuSetup(const int32 NumberPublicConnections, const FString& TypeOfMatch, const FString& LobbyPath)
 {
 	NumPublicConnections = NumberPublicConnections;
 	MatchType			 = TypeOfMatch;
-	
+	LobbyMapPath		 = FString::Printf(TEXT("%s?listen"), *LobbyPath);
+		
 	AddToViewport();
 	SetVisibility(ESlateVisibility::Visible);
 	SetIsFocusable(true);
 	
 	const UWorld* World = GetWorld();
-	if (World)
+	if (IsValid(World))
 	{
 		APlayerController* PlayerController = World->GetFirstPlayerController();
 		if (IsValid(PlayerController))
@@ -104,9 +105,7 @@ void UTestMenu::OnHostSessionButtonClicked()
 void UTestMenu::CreateSessionCompleteCallback(bool bSuccess)
 {
 	if (!GEngine)
-	{
 		return;
-	}
 	
 	if (bSuccess)
 	{
@@ -114,7 +113,7 @@ void UTestMenu::CreateSessionCompleteCallback(bool bSuccess)
 		UWorld* World = GetWorld();
 		if (World)
 		{
-			World->ServerTravel("/Game/Maps/Lobby/L_Lobby?listen");
+			World->ServerTravel(LobbyMapPath, TRAVEL_Absolute);
 		}
 	}
 	else

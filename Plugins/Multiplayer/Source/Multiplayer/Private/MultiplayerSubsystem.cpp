@@ -45,20 +45,20 @@ void UMultiplayerSubsystem::CreateSession(const int32 NumPublicConnections, cons
 	
 	LastSessionSettings = MakeShareable(new FOnlineSessionSettings());
 	
-	LastSessionSettings->bIsLANMatch			= IOnlineSubsystem::Get()->GetSubsystemName() == "NULL";
+	LastSessionSettings->bIsLANMatch			= IOnlineSubsystem::Get()->GetSubsystemName().IsEqual("NULL");
 	LastSessionSettings->bShouldAdvertise		= true;
-	LastSessionSettings->NumPublicConnections	= NumPublicConnections;
 	LastSessionSettings->bAllowJoinInProgress	= true;
 	LastSessionSettings->bAllowJoinViaPresence	= true;
 	// Las dos siguientes lineas son necesarias a partir de 5.6
 	LastSessionSettings->bUsesPresence			= true;
 	LastSessionSettings->bUseLobbiesIfAvailable = true;
+	LastSessionSettings->BuildUniqueId			= 1;
 	LastSessionSettings->Set(FName("MatchType"), SessionName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 	
 	// Estos mas adelante parametrizables
-	LastSessionSettings->bAllowInvites		  = false;
-	LastSessionSettings->bAllowJoinViaPresenceFriendsOnly = true;
-	
+	LastSessionSettings->bAllowInvites			= false;
+	LastSessionSettings->NumPublicConnections	= NumPublicConnections;
+		
 	if (!GetWorld())
 		return;
 	
@@ -85,15 +85,17 @@ void UMultiplayerSubsystem::FindSessions(const int32 MaxSearchResults)
 	{
 		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("FindSessionss SessionInterface invalid"));
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("FindSessions SessionInterface invalid"));
+			UE_LOG(LogTemp, Warning, TEXT("FindSessions SessionInterface invalid"));
 		}
 		return;
 	}
 	
 	FindSessionsCompleteDelegateHandle = SessionInterface->AddOnFindSessionsCompleteDelegate_Handle(FindSessionsCompleteDelegate);
+	
 	LastSessionSearch = MakeShareable(new FOnlineSessionSearch());
 	LastSessionSearch->MaxSearchResults = MaxSearchResults;
-	LastSessionSearch->bIsLanQuery = IOnlineSubsystem::Get()->GetSubsystemName() == "NULL";
+	LastSessionSearch->bIsLanQuery = IOnlineSubsystem::Get()->GetSubsystemName().IsEqual("NULL");
 	
 	LastSessionSearch->QuerySettings.Set(SEARCH_LOBBIES, true, EOnlineComparisonOp::Equals);
 	

@@ -28,6 +28,8 @@ class MULTIPLAYER_API UTestMenu : public UUserWidget
 	
 	int32 NumPublicConnections = 3; 
 	FString MatchType{"FREEFORALL"};
+	FString LobbyMapPath;
+	
 	
 	/**
 	 * Triggered when the "Join Session" button is clicked in the game menu.
@@ -103,7 +105,7 @@ public:
 	 * It ensures that the menu is properly set up for interaction by the player.
 	 */
 	UFUNCTION(BlueprintCallable)
-	void MenuSetup(const int32 NumberPublicConnections = 4, const FString& TypeOfMatch = FString(TEXT("FreeForAll")));
+	void MenuSetup(const int32 NumberPublicConnections = 4, const FString& TypeOfMatch = FString(TEXT("FreeForAll")), const FString& LobbyPath = "");
 	
 	/**
 	 * Getters for the buttons
