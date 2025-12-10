@@ -25,7 +25,6 @@ void ARoomGenerator::BeginPlay()
 	Super::BeginPlay();
 	SpawnRooms();
 }
-
 // Called every frame
 void ARoomGenerator::Tick(float DeltaTime)
 {
@@ -66,7 +65,7 @@ void ARoomGenerator::GenerateStartPoint()
 		default:
 			row =0;
 			col = 0;
-			break; ARoomGenerator();
+			break;
 	}
 	GenerationMatrix[row][col] = 1; //Start position, border
 }
