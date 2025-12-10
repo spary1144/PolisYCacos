@@ -12,14 +12,36 @@ AGenericCharacter::AGenericCharacter()
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("First Person Camera"); 
 	CameraComponent->SetupAttachment(GetRootComponent());
 	
+	OnlineVoiceChatComponent = CreateDefaultSubobject<UVOIPTalker>("Voicechat Component");
+	//OnlineVoiceChatComponent.replicates
+	
 	CameraComponent->bUsePawnControlRotation = true;
 	CameraComponent->bAutoActivate = true;
 	CameraComponent->bUsePawnControlRotation = true;
 }
 
+void AGenericCharacter::InitializeVoiceChatComponent()
+{
+	/*
+	if (!IsValid(OnlineVoiceChatComponent))
+	{
+		// miedo
+		InitializeVoiceChatComponent();
+	}
+	OnlineVoiceChatComponent->RegisterWithPlayerState(GetPlayerState());
+
+
+	//Settings del voicechatcomponent
+	FVoiceSettings Settings;
+	Settings.ComponentToAttachTo = CameraComponent;
+	UVOIPStatics::SetMicThreshold(-1.5f);
+	*/
+}
+
 void AGenericCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	InitializeVoiceChatComponent();
 }
 
 void AGenericCharacter::Tick(float DeltaTime)

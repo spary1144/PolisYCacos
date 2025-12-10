@@ -40,7 +40,8 @@ class MULTIPLAYER_API UMultiplayerSubsystem : public UGameInstanceSubsystem
 
 public:
 	UMultiplayerSubsystem();
-	
+	bool IsValidSessionInterface();
+
 	/**
 	 * This delegates are the ones who broadcast to our menu. Custom made on top of this class
 	 */

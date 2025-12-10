@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Net/VoiceConfig.h"
 #include "GenericCharacter.generated.h"
 
 class UInputMappingContext;
@@ -34,11 +35,15 @@ class POLISYCACOS_API AGenericCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> CameraComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<UVOIPTalker> OnlineVoiceChatComponent;
+	
 protected:
 	virtual void BeginPlay() override;
 
 public:	
 	AGenericCharacter();
+	void InitializeVoiceChatComponent();
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;

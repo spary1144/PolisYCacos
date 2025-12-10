@@ -50,8 +50,9 @@ void UTestMenu::MenuSetup(const int32 NumberPublicConnections, const FString& Ty
 {
 	NumPublicConnections = NumberPublicConnections;
 	MatchType			 = TypeOfMatch;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, FString::Printf(TEXT("Lobby Path: %s"), *LobbyPath));
 	LobbyMapPath		 = FString::Printf(TEXT("%s?listen"), *LobbyPath);
-		
+	
 	AddToViewport();
 	SetVisibility(ESlateVisibility::Visible);
 	SetIsFocusable(true);
@@ -82,7 +83,7 @@ void UTestMenu::MenuSetup(const int32 NumberPublicConnections, const FString& Ty
 		// Binding of the callbacks for the session management when ending functions
 		MultiplayerSubsystem->MultiplayerOnCreateSessionComplete.AddDynamic(this, &ThisClass::CreateSessionCompleteCallback);
 		MultiplayerSubsystem->MultiplayerOnJoinSessionComplete.AddUObject(this, &ThisClass::JoinSessionCompleteCallback);
-		MultiplayerSubsystem->MultiplayerOnJoinSessionComplete.AddUObject(this, &ThisClass::JoinSessionCompleteCallback);
+		MultiplayerSubsystem->MultiplayerOnFindSessionsComplete.AddUObject(this, &ThisClass::FindSessionCompleteCallback);
 		MultiplayerSubsystem->MultiplayerOnStartSessionComplete.AddDynamic(this, &ThisClass::StartSessionCompleteCallback);
 		MultiplayerSubsystem->MultiplayerOnDestroySessionComplete.AddDynamic(this, &ThisClass::DestroySessionCompleteCallback);
 	}
@@ -113,7 +114,13 @@ void UTestMenu::CreateSessionCompleteCallback(bool bSuccess)
 		UWorld* World = GetWorld();
 		if (World)
 		{
-			World->ServerTravel(LobbyMapPath, TRAVEL_Absolute);
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White,FString("Travelling to Map: " + LobbyMapPath));
+
+			const bool exito = World->ServerTravel(LobbyMapPath, TRAVEL_Absolute);
+			if (!exito)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ServerTravel failed"));
+			}
 		}
 	}
 	else
@@ -124,37 +131,46 @@ void UTestMenu::CreateSessionCompleteCallback(bool bSuccess)
 
 void UTestMenu::JoinSessionCompleteCallback(/* FName SessionName,*/ EOnJoinSessionCompleteResult::Type Result)
 {
-	auto GameInstance = GetGameInstance();
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UTestMenu::JoinSessinoCompleteCallback reached"));
-	
+	const auto GameInstance = GetGameInstance();
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UTestMenu::JoinSessionCompleteCallback reached"));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UTestMenu::JoinSessionCompleteCallback Result:"));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, LexToString(Result));
+		
 	if (!IsValid(GameInstance) || Result != EOnJoinSessionCompleteResult::Success || !IsValid(MultiplayerSubsystem))
 		return;
+	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UTestMenu::JoinSessionCompleteCallback Travelling to lobby"));
 	
 	const IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
 	if (!Subsystem)
 		return;
-	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UTestMenu::JoinSessionCompleteCallback Subsystem found"));
+		
 	const IOnlineSessionPtr SessionInterface = Subsystem->GetSessionInterface();
 	if (!SessionInterface.IsValid())
 		return;
 	
-	FString Address; 
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UTestMenu::JoinSessionCompleteCallback SessionInterface found and valid"));
+	
+	
+	FString Address;
 	SessionInterface->GetResolvedConnectString(NAME_GameSession, Address);
+	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("UTestMenu::JoinSessionCompleteCallback Address: %s"), *Address));
 	
 	APlayerController* PlayerController = GameInstance->GetFirstLocalPlayerController();
 	if (!IsValid(PlayerController))
 		return;
 	
-	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UTestMenu::JoinSessionCompleteCallback PlayerController found and valid"));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UTestMenu::JoinSessionCompleteCallback Travelling to lobby"));
 	PlayerController->ClientTravel(Address, TRAVEL_Absolute);
 }
 
 void UTestMenu::FindSessionCompleteCallback(const TArray<FOnlineSessionSearchResult>& SessionResults, bool bWasSuccessful)
 {
-	GEngine->AddOnScreenDebugMessage
-	(-1, 5.f, FColor::White,
-		FString("Find Session Complete Callback. SessionResults lenght: " +  FString::FromInt(SessionResults.Num())));
 	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White,FString("Find Session Complete Callback. SessionResults lenght: " +  FString::FromInt(SessionResults.Num())));
 	
 	if (!IsValid(MultiplayerSubsystem))
 		return;
