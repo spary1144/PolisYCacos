@@ -13,6 +13,9 @@ ARoomParent::ARoomParent()
 	
 	RoomMesh = CreateDefaultSubobject<UStaticMeshComponent>("RoomMesh");
 	RoomMesh->SetupAttachment(GetRootComponent());
+	orientation = typeOfRoom = 1;
+	position.x = 0;
+	position.y = 0;
 }
 
 // Called when the game starts or when spawned
@@ -29,3 +32,33 @@ void ARoomParent::Tick(float DeltaTime)
 
 }
 
+int ARoomParent::getOrientation()
+{
+	return orientation;
+}
+
+Position ARoomParent::getPosition()
+{
+	return position;
+}
+
+int ARoomParent::getType()
+{
+	return typeOfRoom;
+}
+
+void ARoomParent::setType(int type)
+{
+	typeOfRoom = type;
+}
+
+void ARoomParent::setPosition(int x, int y)
+{
+	position.x = x;
+	position.y = y;
+}
+
+void ARoomParent::setOrientation(int ori)
+{
+	orientation = ori;
+}

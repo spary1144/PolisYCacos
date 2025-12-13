@@ -23,15 +23,23 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 	UPROPERTY(EditAnywhere, Category = "Variables", meta=(AllowPrivateAccess = "true"))
-	TSubclassOf<AActor> RoomParentSubclass;
-	
-	UPROPERTY(EditAnywhere, Category = "Variables", meta=(AllowPrivateAccess = "true"))
 	TArray<FArrayRooms> Rooms;
 private:
 	int32 GenerationMatrix[10][10];
+	int8  OrientationMatrix[10][10];
 	void GenerateStartPoint();
 	void GenerateRoomDensity(int Density);
 	void GenerateCorridors();
+	void GenerateRoom(const int type, const int ori, const int posx, const int posy);
+	void FindAndSetMesh(const FString& MeshType, const ARoomParent* Room);
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess="true"))
+	TSubclassOf<AActor> RoomParentSubclass;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess="true"))
+	TMap<FString, TObjectPtr<UStaticMesh>> RoomMeshes; 
+	
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

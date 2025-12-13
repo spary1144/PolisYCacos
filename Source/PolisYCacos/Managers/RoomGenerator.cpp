@@ -11,12 +11,15 @@
 ARoomGenerator::ARoomGenerator()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	ConstructorHelpers::FClassFinder<ARoomParent> Finder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Rooms/BP_RoomParent.BP_RoomParent_C'"));
-	if (Finder.Succeeded())
-		RoomParentSubclass = Finder.Class;
-	
 	PrimaryActorTick.bCanEverTick = true;
 	GenerationMatrix[10][10] = {0};
+	OrientationMatrix[10][10] = {0};
+	ConstructorHelpers::FClassFinder<ARoomParent> Finder(TEXT("/Script/Engine.Blueprint'/Game/Blueprints/Rooms/BP_RoomParent.BP_RoomParent_C'"));
+
+	if (Finder.Succeeded())
+	{
+		RoomParentSubclass = Finder.Class;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -66,7 +69,7 @@ void ARoomGenerator::GenerateStartPoint()
 		default:
 			row =0;
 			col = 0;
-			break; ARoomGenerator();
+			break;
 	}
 	GenerationMatrix[row][col] = 1; //Start position, border
 }
@@ -119,7 +122,10 @@ void ARoomGenerator::GenerateCorridors()
 					{
 						x += (i > x ? 1 : -1);
 						if (GenerationMatrix[x][y] == 0)
+						{
 							GenerationMatrix[x][y] = 3;
+							OrientationMatrix[x][y] = 1; //orientation (top)
+						}
 					}
 
 					// move h
@@ -127,7 +133,9 @@ void ARoomGenerator::GenerateCorridors()
 					{
 						y += (j > y ? 1 : -1);
 						if (GenerationMatrix[x][y] == 0)
+						{
 							GenerationMatrix[x][y] = 3;
+						}
 					}
 				}
 
@@ -171,7 +179,10 @@ void ARoomGenerator::GenerateCorridors()
                                     {
                                         px += (x > px ? 1 : -1);
                                         if (GenerationMatrix[px][py] == 0)
-                                            GenerationMatrix[px][py] = 3;
+                                        {
+	                                        GenerationMatrix[px][py] = 3;
+                                        	OrientationMatrix[px][py] = 1;
+                                        }
                                     }
 
                                     // Horizontal corridor
@@ -179,7 +190,9 @@ void ARoomGenerator::GenerateCorridors()
                                     {
                                         py += (y > py ? 1 : -1);
                                         if (GenerationMatrix[px][py] == 0)
-                                            GenerationMatrix[px][py] = 3;
+                                        {
+	                                        GenerationMatrix[px][py] = 3;
+                                        }
                                     }
 	                                
                                     x = 10; // break x for
@@ -217,6 +230,45 @@ void ARoomGenerator::GenerateLevel(int RoomDensity)
 	GenerateCorridors();
 }
 
+void ARoomGenerator::FindAndSetMesh(const FString& MeshType, const ARoomParent* Room)
+{
+	auto Mesh = *RoomMeshes.Find(MeshType);
+			
+	if (IsValid(Mesh.Get()))
+	{
+		Room->GetMeshComponent()->SetStaticMesh(Mesh);
+	}
+}
+
+void ARoomGenerator::GenerateRoom(const int type, const int ori, const int posx, const int posy)
+{
+	ARoomParent* NewRoom = GetWorld()->SpawnActor<ARoomParent>(RoomParentSubclass);
+	
+	check(IsValid(NewRoom));
+	Rooms[posx].Room[posy] = NewRoom;
+	NewRoom->SetActorLocation(FVector(5000 * posx,5000*posy,0));
+	Rooms[posx].Room[posy]->setPosition(posx,posy);
+	Rooms[posx].Room[posy]->setOrientation(ori);
+	NewRoom->SetActorRotation(FRotator(0,Rooms[posx].Room[posy]->getOrientation() * 90,0));
+	Rooms[posx].Room[posy]->setType(type);
+
+	switch (type)
+	{
+		case 1:
+			FindAndSetMesh("First", NewRoom);
+		break;
+		case 2:
+			FindAndSetMesh("Normal", NewRoom); 
+		break;
+		case 3:
+			FindAndSetMesh("Corridor", NewRoom); 
+		break;
+	default:
+		
+		break;
+	}
+}
+
 /**
  * @brief Printing blueprints for each room or corridor RED(1), BLUE(2), BLACK(3)
  * @param None
@@ -224,32 +276,22 @@ void ARoomGenerator::GenerateLevel(int RoomDensity)
  */
 void ARoomGenerator::SpawnRooms()
 {
+	UWorld* World = GetWorld();
+	check(World);
+	
 	Rooms.Empty();
 	Rooms.Init(FArrayRooms{},10);
 	GenerateLevel(10);
-	for (int i=0; i < 10;++i)
+	for (int32 i=0; i < 10;++i)
 	{
 		Rooms[i].Room.Init(nullptr,10);
-		for (int j=0; j<10;++j)
+		for (int32 j=0; j<10;++j)
 		{
 			//probar makeshared
-			if (!IsValid(RoomParentSubclass) || !IsValid(GetWorld()))
+			if (!IsValid(RoomParentSubclass))
 				continue;
-			if (GenerationMatrix[i][j] == 1 ||GenerationMatrix[i][j] == 2 || GenerationMatrix[i][j] == 3)
-			{
-				auto AuxPtr  = Cast<ARoomParent>(GetWorld()->SpawnActor<ARoomParent>(RoomParentSubclass));
-				if (IsValid(AuxPtr))
-				{
-					Rooms[i].Room.Add(AuxPtr); 
-					if (GenerationMatrix[i][j] == 1 )
-						AuxPtr->GetMeshComponent()->SetMaterial(0, Colours[0]);
-					else if (GenerationMatrix[i][j] == 2)
-						AuxPtr->GetMeshComponent()->SetMaterial(0, Colours[1]);
-					else if (GenerationMatrix[i][j] == 3)
-						AuxPtr->GetMeshComponent()->SetMaterial(0, Colours[2]);
-					AuxPtr->SetActorLocation(FVector(225 * i,225*j,0));
-				}
-			}
+			if (GenerationMatrix[i][j] != 0)
+				GenerateRoom(GenerationMatrix[i][j], OrientationMatrix[i][j], i,j);
 		}
 	}
 }
