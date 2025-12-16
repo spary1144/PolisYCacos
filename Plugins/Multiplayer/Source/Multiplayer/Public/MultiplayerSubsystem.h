@@ -66,8 +66,7 @@ private:
 	
 	// Settings for the search of lobbies we are making
 	TSharedPtr<FOnlineSessionSearch> LastSessionSearch;
-	
-	/**
+		/**
 	 * Online Interface Delegates and their Callbacks related to:
 	 * - Creating Sessions
 	 * - Finding Sessions
@@ -89,6 +88,10 @@ private:
 	
 	FOnStartSessionCompleteDelegate	  StartSessionCompleteDelegate;
 	FDelegateHandle					  StartSessionCompleteDelegateHandle;
+	
+	bool bCreateSessionOnDestroy   = false;
+	int32 LastNumPublicConnections = 0;
+	FString LastMatchType		   = FString();
 	
 	void OnCreatedSession(FName SessionName, bool bSuccess);
 	void OnFindSessionsComplete(bool bSuccess);

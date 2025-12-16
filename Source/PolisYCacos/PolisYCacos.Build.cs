@@ -23,7 +23,7 @@ public class PolisYCacos : ModuleRules
 		
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
-			"Slate", "SlateCore"
+			"Slate", "SlateCore", "Multiplayer"
 		});
 	}
 }

@@ -7,11 +7,11 @@
 class UUserWidget;
 
 UCLASS()
-class POLISYCACOS_API APolisCacosGamemode : public AGameModeBase
+class POLISYCACOS_API APolisCacosGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets", meta =(AllowPrivateAccess="true") )
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets", meta = (AllowPrivateAccess="true"))
 	TSubclassOf<UUserWidget> MainMenuWidgetSubclass; 
 	
 public:
