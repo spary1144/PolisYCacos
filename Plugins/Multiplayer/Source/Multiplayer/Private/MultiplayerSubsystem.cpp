@@ -80,6 +80,7 @@ void UMultiplayerSubsystem::CreateSession(const int32 NumPublicConnections, cons
 		SessionInterface->ClearOnCreateSessionCompleteDelegate_Handle( CreateSessionCompleteDelegateHandle);
 		MultiplayerOnCreateSessionComplete.Broadcast(false);
 	}
+	
 }
 
 void UMultiplayerSubsystem::OnCreatedSession(FName SessionName, bool bSuccess)

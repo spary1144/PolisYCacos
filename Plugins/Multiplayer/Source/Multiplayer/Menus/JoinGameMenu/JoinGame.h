@@ -51,8 +51,6 @@ public:
 	UFUNCTION()
 	void RefreshButtonClicked();
 	
-	virtual void NativeOnInitialized() override;
-	
 	void InitializeGamelist();
 		
 	void FillScrollBox(const TArray<FOnlineSessionSearchResult>& SessionResults);

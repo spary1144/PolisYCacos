@@ -1,14 +1,9 @@
 ﻿#include "JoinGame.h"
 #include "OnlineSessionSettings.h"
 
-void UJoinGame::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
-	
-}
-
 void UJoinGame::InitializeGamelist()
 {
+	
 }
 
 void UJoinGame::RefreshButtonClicked()

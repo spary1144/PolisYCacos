@@ -54,15 +54,15 @@ void UMainMenu::MenuSetup()
 
 void UMainMenu::PlayMenuBackButtonPressed()
 {
-	PlayMenu->SetVisibility(ESlateVisibility::Collapsed);
-	SetVisibility(ESlateVisibility::Visible);
+	PlayMenu->HidePlayMenu();
+	MainMenuButtonsVerticalBox->SetVisibility(ESlateVisibility::Visible);
 }
-
 
 void UMainMenu::PlayButtonClicked()
 {
 	PlayMenu->SetVisibility(ESlateVisibility::Visible);
-	MainMenuButtonsVerticalBox->SetVisibility(ESlateVisibility::Collapsed);
+	PlayMenu->ShowPlayMenu();
+	MainMenuButtonsVerticalBox->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainMenu::SettingsButtonClicked()

@@ -46,7 +46,7 @@ class MULTIPLAYER_API UPlayMenu : public UUserWidget
 	 */
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BindWidget))
-	TObjectPtr<UJoinGame> ScrollBoxMenu;
+	TObjectPtr<UJoinGame> JoinGameMenu;
 
 	/** 
 	 * Temporal
@@ -83,11 +83,14 @@ protected:
 	UFUNCTION()
 	void JoinMenuBackButtonPressed();
 	
+
+	
 	/**
 	 * Class called when initializing the UserWidgets. Similar to constructor or Begin Play but for Widgets
 	 * @return if the class was successfully initialized
 	 */
 	virtual bool Initialize() override;
+	
 	/**
 	 * Custom destructor for this class (not a destructor perse, just a function manually called when destructing)
 	 */
@@ -135,14 +138,19 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void MenuSetup(const int32 NumberPublicConnections = 4, const FString& TypeOfMatch = FString(TEXT("FreeForAll")), const FString& LobbyPath = "");
 	
+	UFUNCTION()
+	void ShowPlayMenu();
+	
+	UFUNCTION()
+	void HidePlayMenu();
 	/**
 	 * Getters for the buttons
 	 */
 	[[nodiscard]] FORCEINLINE TObjectPtr<UButton> GetJoinSessionButton() const { return JoinSessionButton; }
 	[[nodiscard]] FORCEINLINE TObjectPtr<UButton> GetHostSessionButton() const { return HostSessionButton; }
-	[[nodiscard]] FORCEINLINE TObjectPtr<UButton> GetBackButton() const { return BackButton; };
+	[[nodiscard]] FORCEINLINE TObjectPtr<UButton> GetBackButton() const { return BackButton; }
 	[[nodiscard]] FORCEINLINE TObjectPtr<UHorizontalBox> GetHostJoinHorizontalBox() const { return HostJoinHorizontalBox; }
-	[[nodiscard]] FORCEINLINE TObjectPtr<UJoinGame> GetScrollBoxMenu() const{ return ScrollBoxMenu; }
+	[[nodiscard]] FORCEINLINE TObjectPtr<UJoinGame> GetJoinGameMenu() const{ return JoinGameMenu; }
 
 	
 };
