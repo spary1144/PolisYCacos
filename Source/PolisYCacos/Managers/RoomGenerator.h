@@ -24,6 +24,7 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "Variables", meta=(AllowPrivateAccess = "true"))
 	TArray<FArrayRooms> Rooms;
+	TArray<TObjectPtr<ARoomParent>> Walls;
 private:
 	static constexpr short LvlDensity = 11;
 	int32 GenerationMatrix[LvlDensity][LvlDensity];
@@ -34,7 +35,9 @@ private:
 	void SpawnPoliceRooms();
 	void GenerateCorridors();
 	void GenerateRoom(const int type, const int ori, const int posx, const int posy);
+	void SetMeshToRoom(int type, ARoomParent* Room);
 	void FindAndSetMesh(const FString& MeshType, const ARoomParent* Room);
+	void GenerateWalls(int type, int ori, int posx, int posy);
 	void CheckOrientation();
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess="true"))
 	TSubclassOf<AActor> RoomParentSubclass;
@@ -51,10 +54,9 @@ protected:
 	void GenerateLevel(int RoomDensity);
 	void MergeRooms(int Density);
 	Chaos::Pair<int,int> CheckNextRoom(int x, int y);
-	void PaintMatrix();
-
+	void WallGeneration();
 	UFUNCTION(CallInEditor, DisplayName="Generate")
-	void SpawnRooms();
+	void SpawnRooms(int RoomDensity);
 	
 	UPROPERTY(EditAnywhere, Category = "Variables", meta=(AllowPrivateAccess = "true"))
 	TArray<TObjectPtr<UMaterial>> Colours;

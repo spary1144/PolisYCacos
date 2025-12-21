@@ -28,7 +28,7 @@ ARoomGenerator::ARoomGenerator()
 void ARoomGenerator::BeginPlay()
 {
 	Super::BeginPlay();
-	SpawnRooms();
+	GenerateLevel(10);
 }
 
 // Called every frame
@@ -55,19 +55,6 @@ void ARoomGenerator::GenerateStartPoint()
  */
 void ARoomGenerator::GenerateRoomDensity(int Density)
 {
-	/*int RoomsCreated = 0;
-	while (RoomsCreated < Density)
-	{
-		int32 r{}, c{};
-		r = rand() % LvlDensity;
-		c = rand() % LvlDensity;
-		if (GenerationMatrix[r][c] != 1 && GenerationMatrix[r][c] != 2)
-		{
-			GenerationMatrix[r][c] = 2;
-			RoomsCreated++;
-		}
-	}*/
-	
 	int elements = 0;
 	int ratio = 50;
 	while (elements < Density)
@@ -103,6 +90,51 @@ void ARoomGenerator::GenerateRoomDensity(int Density)
 		}
 	}
 }
+// 6 muro 7 pared con arco 8 pared con puerta
+void ARoomGenerator::WallGeneration()
+{
+	for (int i = 0; i < LvlDensity; ++i)
+	{
+		for (int j = 0; j < LvlDensity; ++j)
+		{
+			if (GenerationMatrix[i][j] == 2 || GenerationMatrix[i][j] == 4)
+			{
+				int x=0,y=0;
+				for (int Orientation = 0; Orientation < 4; ++Orientation)
+				{
+					if (Orientation == 0) { x=-1; y=0;}
+					else if (Orientation == 1){x=0; y=-1;}
+					else if (Orientation == 2){x=1; y=0;}
+					else if (Orientation == 3){x=0; y=1;}
+					
+					if (i+x > LvlDensity-1 || i+x < 0 || j+y > LvlDensity-1|| j+y < 0 || i+x < 0)
+					{
+						GenerateWalls(6, Orientation, i,j);
+					}
+					else
+					{
+						if ( GenerationMatrix[i+x][j+y] == 0) 
+						{
+							GenerateWalls(6, Orientation, i,j);
+						}
+						else if (GenerationMatrix[i+x][j+y] == 2)
+						{
+							GenerateWalls(7, Orientation, i,j);
+						}
+						else if (GenerationMatrix[i+x][j+y] == 3)
+						{
+							GenerateWalls(8, Orientation, i, j);
+						}
+						else if (GenerationMatrix[i+x][j+y] == 4 && GenerationMatrix[i][j] != 4 )
+						{
+							GenerateWalls(7, Orientation, i, j);
+						}
+					}
+				}
+			}
+		}
+	}
+}
 
 int ARoomGenerator::PutRoom(int ratio, int posx, int posy)
 {
@@ -132,18 +164,19 @@ void ARoomGenerator::SpawnPoliceRooms()
 	
 	// Spawn
 	GenerationMatrix[x+4][y] = 2;
-	GenerationMatrix[x+3][y] = 3; OrientationMatrix[x+3][y] = 1;
-	GenerationMatrix[x+2][y] = 5; OrientationMatrix[x+2][y] = 3;
+	GenerationMatrix[x+3][y] = 3; OrientationMatrix[x+3][y] = 3;
 	GenerationMatrix[x+1][y] = 3; OrientationMatrix[x+1][y] = 1;
 	
 	if (LvlDensity / 2 < y)
 	{
-		GenerationMatrix[x+2][y-1] = 3;
+		GenerationMatrix[x+2][y] = 5; OrientationMatrix[x+2][y] = 3;
+		GenerationMatrix[x+2][y-1] = 3; OrientationMatrix[x+2][y-1] = 2;
 		GenerationMatrix[x+2][y-2] = 2;
 	}
 	else
 	{
-		GenerationMatrix[x+2][y+1] = 3;
+		GenerationMatrix[x+2][y] = 5; OrientationMatrix[x+2][y] = 1;
+		GenerationMatrix[x+2][y+1] = 3; OrientationMatrix[x+2][y-1] = 0;
 		GenerationMatrix[x+2][y+2] = 2;
 	}
 	
@@ -283,13 +316,25 @@ void ARoomGenerator::GenerateCorridors()
 	GenerateCorridors();
 }*/
 
-void ARoomGenerator::GenerateLevel(int RoomDensity)
+void ARoomGenerator::SpawnRooms(int RoomDensity)
 {
 	GenerateStartPoint();
 	GenerateRoomDensity(RoomDensity);
 	SpawnPoliceRooms();
 	MergeRooms(RoomDensity);
-	int a=0;
+	WallGeneration();
+	for (int32 i=0; i < LvlDensity;++i)
+	{
+		Rooms[i].Room.Init(nullptr,LvlDensity);
+		for (int32 j=0; j<LvlDensity;++j)
+		{
+			//probar makeshared
+			if (!IsValid(RoomParentSubclass))
+				continue;
+			if (GenerationMatrix[i][j] != 0)
+				GenerateRoom(GenerationMatrix[i][j], OrientationMatrix[i][j], i,j);
+		}
+	}
 }
 
 void ARoomGenerator::MergeRooms(int Density)
@@ -297,15 +342,15 @@ void ARoomGenerator::MergeRooms(int Density)
 	int elements = 0, roomsMerged = 0;
 	if (Density <= 10)
 	{
-		elements = 2;
+		elements = rand() % 2 + 2;
 	}
 	else if (Density > 10 && Density < 15)
 	{
-		elements = 3;
+		elements = rand() % 2 + 3;
 	}
 	else
 	{	
-		elements = 4;
+		elements = rand() % 2 + 4;
 	}
 	while (roomsMerged < elements)
 	{
@@ -366,7 +411,19 @@ void ARoomGenerator::FindAndSetMesh(const FString& MeshType, const ARoomParent* 
 		Room->GetMeshComponent()->SetStaticMesh(Mesh);
 	}
 }
-
+void ARoomGenerator::GenerateWalls(const int type, const int ori, const int posx, const int posy)
+{
+	ARoomParent* NewRoom = GetWorld()->SpawnActor<ARoomParent>(RoomParentSubclass);
+	
+	check(IsValid(NewRoom));
+	Walls.Add(NewRoom);
+	Walls.Last()->SetActorLocation(FVector(5000 * posx,5000*posy,10));
+	Walls.Last()->setPosition(posx,posy);
+	Walls.Last()->setOrientation(ori);
+	Walls.Last()->SetActorRotation(FRotator(0,Walls.Last()->getOrientation() * 90,0));
+	Walls.Last()->setType(type);
+	SetMeshToRoom(type, NewRoom);
+}
 void ARoomGenerator::GenerateRoom(const int type, const int ori, const int posx, const int posy)
 {
 	ARoomParent* NewRoom = GetWorld()->SpawnActor<ARoomParent>(RoomParentSubclass);
@@ -379,22 +436,36 @@ void ARoomGenerator::GenerateRoom(const int type, const int ori, const int posx,
 	NewRoom->SetActorRotation(FRotator(0,Rooms[posx].Room[posy]->getOrientation() * 90,0));
 	Rooms[posx].Room[posy]->setType(type);
 
+	SetMeshToRoom(type, NewRoom);
+}
+
+void ARoomGenerator::SetMeshToRoom(int type, ARoomParent* Room)
+{
 	switch (type)
 	{
-		case 1:
-			FindAndSetMesh("First", NewRoom);
+	case 1:
+		FindAndSetMesh("First", Room);
 		break;
-		case 2:
-			FindAndSetMesh("Normal", NewRoom); 
+	case 2:
+		FindAndSetMesh("Normal", Room); 
 		break;
-		case 3:
-			FindAndSetMesh("Corridor", NewRoom); 
+	case 3:
+		FindAndSetMesh("Corridor", Room); 
 		break;
-		case 4:
-			FindAndSetMesh("Double room", NewRoom);
+	case 4:
+		FindAndSetMesh("Double room", Room);
 		break;
-		case 5:
-			FindAndSetMesh("Crossing", NewRoom);
+	case 5:
+		FindAndSetMesh("Crossing", Room);
+		break;
+	case 6:
+		FindAndSetMesh("Wall", Room);
+		break;
+	case 7:
+		FindAndSetMesh("Open wall", Room);
+		break;
+	case 8:
+		FindAndSetMesh("Wall door", Room);
 		break;
 	default:
 		
@@ -407,27 +478,16 @@ void ARoomGenerator::GenerateRoom(const int type, const int ori, const int posx,
  * @param None
  * @return void
  */
-void ARoomGenerator::SpawnRooms()
+void ARoomGenerator::GenerateLevel(int RoomDensity)
 {
 	UWorld* World = GetWorld();
 	check(World);
 	
 	Rooms.Empty();
 	Rooms.Init(FArrayRooms{},LvlDensity);
-	GenerateLevel(10);
-	//CheckOrientation();
-	for (int32 i=0; i < LvlDensity;++i)
-	{
-		Rooms[i].Room.Init(nullptr,LvlDensity);
-		for (int32 j=0; j<LvlDensity;++j)
-		{
-			//probar makeshared
-			if (!IsValid(RoomParentSubclass))
-				continue;
-			if (GenerationMatrix[i][j] != 0)
-				GenerateRoom(GenerationMatrix[i][j], OrientationMatrix[i][j], i,j);
-		}
-	}
+	Walls.Empty();
+	Walls.Init(nullptr,(RoomDensity+6)*4);
+	SpawnRooms(RoomDensity);
 }
 
 void ARoomGenerator::CheckOrientation()
