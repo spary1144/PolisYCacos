@@ -308,7 +308,7 @@ void ARoomGenerator::GenerateRoom(const int type, const int ori, const int posx,
 	
 	check(IsValid(NewRoom));
 	Rooms[posx].Room[posy] = NewRoom;
-	NewRoom->SetActorLocation(FVector(5000 * posx,5000*posy,0));
+	NewRoom->SetActorLocation(FVector(5000 * posx,5000*posy,10));
 	Rooms[posx].Room[posy]->setPosition(posx,posy);
 	Rooms[posx].Room[posy]->setOrientation(ori);
 	NewRoom->SetActorRotation(FRotator(0,Rooms[posx].Room[posy]->getOrientation() * 90,0));
@@ -349,7 +349,7 @@ void ARoomGenerator::SpawnRooms()
 	
 	Rooms.Empty();
 	Rooms.Init(FArrayRooms{},LvlDensity);
-	GenerateLevel(20);
+	GenerateLevel(10);
 	//CheckOrientation();
 	for (int32 i=0; i < LvlDensity;++i)
 	{
