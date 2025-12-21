@@ -21,43 +21,41 @@ public:
 	ARoomGenerator();
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	
-	UPROPERTY(EditAnywhere, Category = "Variables", meta=(AllowPrivateAccess = "true"))
-	TArray<FArrayRooms> Rooms;
-	TArray<TObjectPtr<ARoomParent>> Walls;
 private:
-	static constexpr short LvlDensity = 11;
-	int32 GenerationMatrix[LvlDensity][LvlDensity];
-	int8  OrientationMatrix[LvlDensity][LvlDensity];
+	
 	void GenerateStartPoint();
 	void GenerateRoomDensity(int Density);
 	int  PutRoom(int ratio, int posx, int posy);
 	void SpawnPoliceRooms();
-	void GenerateCorridors();
 	void GenerateRoom(const int type, const int ori, const int posx, const int posy);
 	void SetMeshToRoom(int type, ARoomParent* Room);
 	void FindAndSetMesh(const FString& MeshType, const ARoomParent* Room);
 	void GenerateWalls(int type, int ori, int posx, int posy);
-	void CheckOrientation();
+	void SpawnRooms(int RoomDensity);
+	void WallGeneration();
+	void MergeRooms(int Density);
+	Chaos::Pair<int,int> CheckNextRoom(int x, int y);
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess="true"))
 	TSubclassOf<AActor> RoomParentSubclass;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (AllowPrivateAccess="true"))
 	TMap<FString, TObjectPtr<UStaticMesh>> RoomMeshes; 
 	
-	 
+	UPROPERTY(EditAnywhere, Category = "Variables", meta=(AllowPrivateAccess = "true"))
+	TArray<FArrayRooms> Rooms;
+	
+	UPROPERTY(EditAnywhere, Category = "Variables", meta=(AllowPrivateAccess = "true"))
+	TArray<TObjectPtr<ARoomParent>> Walls;	
+	
+	static constexpr short LvlDensity = 11;
+	int32 GenerationMatrix[LvlDensity][LvlDensity];
+	int8  OrientationMatrix[LvlDensity][LvlDensity];
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
 	UFUNCTION(CallInEditor, DisplayName="GenerateLvl")
 	void GenerateLevel(int RoomDensity);
-	void MergeRooms(int Density);
-	Chaos::Pair<int,int> CheckNextRoom(int x, int y);
-	void WallGeneration();
-	UFUNCTION(CallInEditor, DisplayName="Generate")
-	void SpawnRooms(int RoomDensity);
-	
-	UPROPERTY(EditAnywhere, Category = "Variables", meta=(AllowPrivateAccess = "true"))
-	TArray<TObjectPtr<UMaterial>> Colours;
+
 };
