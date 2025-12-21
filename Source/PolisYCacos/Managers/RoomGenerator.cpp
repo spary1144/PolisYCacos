@@ -119,6 +119,7 @@ int ARoomGenerator::PutRoom(int ratio, int posx, int posy)
 void ARoomGenerator::SpawnPoliceRooms()
 {
 	int x=0,y=0;
+	//Select last room
 	for (int i = 0; i < LvlDensity; ++i)
 	{
 		for (int j = 0; j < LvlDensity; ++j)
@@ -129,10 +130,24 @@ void ARoomGenerator::SpawnPoliceRooms()
 			}
 		}
 	}
+	
+	// Spawn
 	GenerationMatrix[x+4][y] = 2;
-	GenerationMatrix[x+3][y] = 3;
-	GenerationMatrix[x+2][y] = 3;
-	GenerationMatrix[x+1][y] = 3;
+	GenerationMatrix[x+3][y] = 3; OrientationMatrix[x+3][y] = 1;
+	GenerationMatrix[x+2][y] = 5; OrientationMatrix[x+2][y] = 1;
+	GenerationMatrix[x+1][y] = 3; OrientationMatrix[x+1][y] = 1;
+	
+	if (LvlDensity / 2 < y)
+	{
+		GenerationMatrix[x+2][y-1] = 3;
+		GenerationMatrix[x+2][y-2] = 2;
+	}
+	else
+	{
+		GenerationMatrix[x+2][y+1] = 3;
+		GenerationMatrix[x+2][y+2] = 2;
+	}
+	
 }
 /**
  * @brief Generate corridors between rooms \n
@@ -334,7 +349,7 @@ void ARoomGenerator::SpawnRooms()
 	
 	Rooms.Empty();
 	Rooms.Init(FArrayRooms{},LvlDensity);
-	GenerateLevel(10);
+	GenerateLevel(20);
 	//CheckOrientation();
 	for (int32 i=0; i < LvlDensity;++i)
 	{
