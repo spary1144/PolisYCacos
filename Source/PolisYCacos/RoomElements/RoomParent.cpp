@@ -13,7 +13,8 @@ ARoomParent::ARoomParent()
 	
 	RoomMesh = CreateDefaultSubobject<UStaticMeshComponent>("RoomMesh");
 	RoomMesh->SetupAttachment(GetRootComponent());
-	orientation = typeOfRoom = 1;
+	typeOfRoom = 1;
+	orientation = 0;
 	position.x = 0;
 	position.y = 0;
 }
