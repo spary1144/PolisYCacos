@@ -49,6 +49,8 @@ protected:
 	
 	UFUNCTION(CallInEditor, DisplayName="GenerateLvl")
 	void GenerateLevel(int RoomDensity);
+	void MergeRooms(int Density);
+	Chaos::Pair<int,int> CheckNextRoom(int x, int y);
 	void PaintMatrix();
 
 	UFUNCTION(CallInEditor, DisplayName="Generate")

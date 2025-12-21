@@ -81,7 +81,6 @@ void ARoomGenerator::GenerateRoomDensity(int Density)
 					if (y - 1 > 0 && GenerationMatrix[x][y-1] == 0 && elements < Density)
 					{
 						elements += PutRoom(ratio, x, y - 1);
-						
 					}
 					else if (y + 1 < LvlDensity && GenerationMatrix[x][y+1] == 0 && elements < Density)
 					{
@@ -134,7 +133,7 @@ void ARoomGenerator::SpawnPoliceRooms()
 	// Spawn
 	GenerationMatrix[x+4][y] = 2;
 	GenerationMatrix[x+3][y] = 3; OrientationMatrix[x+3][y] = 1;
-	GenerationMatrix[x+2][y] = 5; OrientationMatrix[x+2][y] = 1;
+	GenerationMatrix[x+2][y] = 5; OrientationMatrix[x+2][y] = 3;
 	GenerationMatrix[x+1][y] = 3; OrientationMatrix[x+1][y] = 1;
 	
 	if (LvlDensity / 2 < y)
@@ -289,7 +288,73 @@ void ARoomGenerator::GenerateLevel(int RoomDensity)
 	GenerateStartPoint();
 	GenerateRoomDensity(RoomDensity);
 	SpawnPoliceRooms();
+	MergeRooms(RoomDensity);
 	int a=0;
+}
+
+void ARoomGenerator::MergeRooms(int Density)
+{
+	int elements = 0, roomsMerged = 0;
+	if (Density <= 10)
+	{
+		elements = 2;
+	}
+	else if (Density > 10 && Density < 15)
+	{
+		elements = 3;
+	}
+	else
+	{	
+		elements = 4;
+	}
+	while (roomsMerged < elements)
+	{
+		for (int i = 0; i < LvlDensity; ++i)
+		{
+			for (int j = 0; j < LvlDensity; ++j)
+			{
+				if (GenerationMatrix[i][j] == 2)
+				{
+					int chanceToCreateADoubleRoom = rand() % 100;
+					if (chanceToCreateADoubleRoom <= 20)
+					{
+						Chaos::Pair<int,int> doubleRoom = CheckNextRoom(i,j);
+						if (doubleRoom.First != -1 && doubleRoom.Second != -1)
+						{
+							GenerationMatrix[doubleRoom.First][doubleRoom.Second] = 4;
+							GenerationMatrix[i][j] = 4;
+							roomsMerged++;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+Chaos::Pair<int,int> ARoomGenerator::CheckNextRoom(int x, int y)
+{
+	Chaos::Pair<int,int> position = {-1,-1};
+	if (x>0 && x<LvlDensity && y>0 && y<LvlDensity)
+	{
+		if (GenerationMatrix[x][y-1] == 2)
+		{
+			position = {x,y-1};
+		}
+		else if (GenerationMatrix[x][y+1] == 2)
+		{
+			position = {x,y+1};
+		}
+		else if (GenerationMatrix[x-1][y] == 2)
+		{
+			position = {x-1,y};	
+		}
+		else if (GenerationMatrix[x+1][y] == 2)
+		{
+			position = {x+1,y};
+		}
+	}
+	return position;
 }
 
 void ARoomGenerator::FindAndSetMesh(const FString& MeshType, const ARoomParent* Room)
@@ -326,7 +391,7 @@ void ARoomGenerator::GenerateRoom(const int type, const int ori, const int posx,
 			FindAndSetMesh("Corridor", NewRoom); 
 		break;
 		case 4:
-			FindAndSetMesh("Corridor Corner", NewRoom);
+			FindAndSetMesh("Double room", NewRoom);
 		break;
 		case 5:
 			FindAndSetMesh("Crossing", NewRoom);
