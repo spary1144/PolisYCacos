@@ -11,6 +11,7 @@
  * Test class to test online functionallity with the Multiplayer Subsystem plugin
  */
 
+class UCanvasPanel;
 class UJoinGame;
 class UJoinMenu;
 class UVerticalBox;
@@ -40,6 +41,9 @@ class MULTIPLAYER_API UPlayMenu : public UUserWidget
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BindWidget))
 	TObjectPtr<UButton> BackButton;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true", BindWidget))
+	TObjectPtr<UCanvasPanel> BackgroundCanvasPanel;
 	
 	/**
 	 * Second part of the menu containing the scroll box for the join game menu

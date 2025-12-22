@@ -2,6 +2,7 @@
 
 #include "MultiplayerSubsystem.h"
 #include "OnlineSessionSettings.h"
+#include "Components/CanvasPanel.h"
 #include "Components/HorizontalBox.h"
 #include "Engine/Engine.h"
 #include "Multiplayer/Menus/JoinGameMenu/JoinGame.h"
@@ -29,8 +30,9 @@ bool UPlayMenu::Initialize()
 void UPlayMenu::HidePlayMenu()
 {
 	// Don't hide this bc children wont be seen, only hide the basics of this menu
-	GetHostJoinHorizontalBox()->SetVisibility(ESlateVisibility::Hidden);
-	GetBackButton()->SetVisibility(ESlateVisibility::Hidden);
+	// GetHostJoinHorizontalBox()->SetVisibility(ESlateVisibility::Hidden);
+	// GetBackButton()->SetVisibility(ESlateVisibility::Hidden);
+	//BackgroundCanvasPanel.Get()->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UPlayMenu::JoinMenuBackButtonPressed()
