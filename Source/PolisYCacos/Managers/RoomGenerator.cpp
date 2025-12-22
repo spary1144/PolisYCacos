@@ -285,19 +285,19 @@ Chaos::Pair<int,int> ARoomGenerator::CheckNextRoom(int x, int y)
 	Chaos::Pair<int,int> position = {-1,-1};
 	if (x>0 && x<LvlDensity && y>0 && y<LvlDensity)
 	{
-		if (GenerationMatrix[x][y-1] == 2)
+		if ((y-1)>0 && GenerationMatrix[x][y-1] == 2)
 		{
 			position = {x,y-1};
 		}
-		else if (GenerationMatrix[x][y+1] == 2)
+		else if ((y+1)<LvlDensity && GenerationMatrix[x][y+1] == 2)
 		{
 			position = {x,y+1};
 		}
-		else if (GenerationMatrix[x-1][y] == 2)
+		else if ((x-1)>0 && GenerationMatrix[x-1][y] == 2)
 		{
 			position = {x-1,y};	
 		}
-		else if (GenerationMatrix[x+1][y] == 2)
+		else if ((x+1)<LvlDensity && GenerationMatrix[x+1][y] == 2)
 		{
 			position = {x+1,y};
 		}
